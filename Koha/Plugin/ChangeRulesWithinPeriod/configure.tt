@@ -1,0 +1,42 @@
+[% USE KohaDates %]
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Change Rules Within Period: Configuration</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Change Rules Within Period &rsaquo; Configuration</div>
+
+<div id="doc3">
+
+    <h3>Koha: Change Rules Value Within Period: Configuration</h3>
+
+    <form method="get">
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <label for="start_date">From date: </label>
+        <input type="date" name="start_date" value="[% start_date %]" />
+        <p>
+
+        <label for="end_date">To date: </label>
+        <input type="date" name="end_date" value="[% end_date %]" />
+        <p>
+
+        <label for="rule_name">Rule name: </label>
+        <input type="text" name="rule_name" value="[% rule_name %]" />
+        <p>
+
+        <label for="rule_new_value">New rule value: </label>
+        <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
+        <p>
+
+        <input type="hidden" name="save" value="1" />
+        <input type="submit" value="Save configuration" />
+    </form>
+
+    <hr/>
+
+[% INCLUDE 'intranet-bottom.inc' %]
