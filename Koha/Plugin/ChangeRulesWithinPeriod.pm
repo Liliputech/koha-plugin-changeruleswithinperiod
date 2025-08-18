@@ -135,7 +135,8 @@ sub configure {
                 rule_new_value => $cgi->param('rule_new_value'),
             }
         );
-        $self->go_home();
+	print $self->{'cgi'}->redirect("/cgi-bin/koha/admin/smart-rules.pl");
+	return;
     }
 }
 
