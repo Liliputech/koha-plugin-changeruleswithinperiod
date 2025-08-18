@@ -67,8 +67,13 @@ sub install() {
 sub backup_circulation_rules {
     my ( $self ) = @_;
     my $rule_name=$self->retrieve_data('rule_name');
+    my $ignore_zero = $self->retrieve_data('ignore_zero');
     my $dbh = C4::Context->dbh;
-    my $sth = $dbh->prepare("SELECT id, rule_value FROM circulation_rules WHERE rule_name = ?");
+    my $query = "SELECT id, rule_value FROM circulation_rules WHERE rule_name = ?";
+    if ($ignore_zero) {
+	$query .= " AND rule_value != 0";
+    }
+    my $sth = $dbh->prepare($query);
     $sth->execute($rule_name);
     my @previous_rules;
     while ( my $data = $sth->fetchrow_hashref() ) {
@@ -86,8 +91,13 @@ sub set_new_rule_value {
     my ( $self ) = @_;
     my $rule_name=$self->retrieve_data('rule_name');
     my $rule_value=$self->retrieve_data('rule_new_value');
+    my $ignore_zero = $self->retrieve_data('ignore_zero');
     my $dbh = C4::Context->dbh;
-    my $sth = $dbh->prepare("UPDATE circulation_rules SET rule_value=? WHERE rule_name = ?");
+    my $query = "UPDATE circulation_rules SET rule_value=? WHERE rule_name = ?";
+    if ($ignore_zero) {
+	$query .= " AND rule_value != 0";
+    }
+    my $sth = $dbh->prepare($query);
     $sth->execute( $rule_value, $rule_name );
 }
 
@@ -122,6 +132,7 @@ sub configure {
             end_date       => $self->retrieve_data('end_date'),
             rule_name      => $self->retrieve_data('rule_name'),
             rule_new_value => $self->retrieve_data('rule_new_value'),
+	    ignore_zero    => $self->retrieve_data('ignore_zero'),
         );
 
         $self->output_html( $template->output() );
@@ -133,6 +144,7 @@ sub configure {
                 end_date       => $cgi->param('end_date'),
                 rule_name      => $cgi->param('rule_name'),
                 rule_new_value => $cgi->param('rule_new_value'),
+		ignore_zero    => $cgi->param('ignore_zero'),
             }
         );
 	print $self->{'cgi'}->redirect("/cgi-bin/koha/admin/smart-rules.pl");

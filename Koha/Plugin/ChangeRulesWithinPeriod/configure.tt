@@ -33,7 +33,11 @@
         <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
         <p>
 
-        <input type="hidden" name="save" value="1" />
+	<label for="ignore_zero">Ignore zero : </label>
+	<input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
+	<p>
+
+	<input type="hidden" name="save" value="1" />
         <input type="submit" value="Save configuration" />
     </form>
 
