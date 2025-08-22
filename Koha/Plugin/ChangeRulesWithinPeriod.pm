@@ -160,9 +160,9 @@ Plugin hook running code from a cron job
 
 sub cronjob_nightly {
     my ( $self ) = @_;
-    my $today = DateTime->now->truncate(to => 'day');
-    my $start_date = dt_from_string($self->retrieve_data('start_date'), 'iso');
-    my $end_date = dt_from_string($self->retrieve_data('end_date'), 'iso');
+    my $today = DateTime->now->truncate(to => 'day')->ymd('');
+    my $start_date = dt_from_string($self->retrieve_data('start_date'), 'iso')->ymd('');
+    my $end_date = dt_from_string($self->retrieve_data('end_date'), 'iso')->ymd('');
 
     if ( $today < $start_date ) {
         print "nothing to do : before start_date";
