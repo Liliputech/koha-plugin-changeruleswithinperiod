@@ -9,38 +9,42 @@
 
 <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Change Rules Within Period &rsaquo; Configuration</div>
 
-<div id="doc3">
-
+<div id="doc3" class="row m-3">
+ <div class="col-sm-12">
     <h3>Koha: Change Rules Value Within Period: Configuration</h3>
-
+    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>Show current circulation rules</b></a>
     <form method="get">
         <input type="hidden" name="class" value="[% CLASS %]"/>
         <input type="hidden" name="method" value="[% METHOD %]"/>
-
-        <label for="start_date">From date: </label>
+	<div class="rows"><ol>
+	<li>
+        <span class="label start_date">From date: </span>
         <input type="date" name="start_date" value="[% start_date %]" />
-        <p>
+        </li>
 
-        <label for="end_date">To date: </label>
+	<li>
+        <span class="label end_date">To date: </span>
         <input type="date" name="end_date" value="[% end_date %]" />
-        <p>
+        </li>
 
-        <label for="rule_name">Rule name: </label>
+	<li>
+        <span class="label rule_name">Rule name: </span>
         <input type="text" name="rule_name" value="[% rule_name %]" />
-        <p>
+        </li>
 
-        <label for="rule_new_value">New rule value: </label>
+	<li>
+        <span class="label rule_new_value">New rule value: </span>
         <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
-        <p>
+        </li>
 
-	<label for="ignore_zero">Ignore zero : </label>
+	<li>
+	<span class="label ignore_zero">Ignore zero : </span>
 	<input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
-	<p>
-
+	</li>
+	</ol>
 	<input type="hidden" name="save" value="1" />
         <input type="submit" value="Save configuration" />
     </form>
-
-    <hr/>
-
+  </div>
+</div>
 [% INCLUDE 'intranet-bottom.inc' %]

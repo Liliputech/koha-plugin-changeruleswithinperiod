@@ -147,7 +147,7 @@ sub configure {
 		ignore_zero    => $cgi->param('ignore_zero'),
             }
         );
-	print $self->{'cgi'}->redirect("/cgi-bin/koha/admin/smart-rules.pl");
+	print $self->go_home();
 	return;
     }
 }
