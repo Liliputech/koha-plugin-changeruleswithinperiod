@@ -1,0 +1,20 @@
+{
+  "/config": {
+    "get": {
+      "x-mojo-to": "ChangeRulesWithinPeriod::Controller#config",
+      "description": "Called by javascript to get the plugin configuration values",
+      "operationId": "getConfig",
+      "tags": [
+        "admin"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "the values set in the plugin configuration"
+        }
+      }
+    }
+  }
+}

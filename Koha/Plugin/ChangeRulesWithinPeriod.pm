@@ -6,6 +6,7 @@ use Modern::Perl;
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
 use C4::Context;
+use Mojo::JSON qw(decode_json);
 
 use Koha::DateUtils qw( dt_from_string );
 
@@ -190,3 +191,31 @@ sub cronjob_nightly {
     print "nothing to do : within period";
     return;
 }
+
+sub intranet_js {
+    my ( $self ) = @_;
+    return '<script>' . $self->mbf_read('checkdates.js') . '</script>';
+}
+
+sub static_routes {
+    my ( $self, $args ) = @_;
+
+    my $spec_str = $self->mbf_read('staticapi.json');
+    my $spec     = decode_json($spec_str);
+
+    return $spec;
+}
+
+sub api_routes {
+    my ( $self, $args ) = @_;
+    my $spec_str;
+    $spec_str = $self->mbf_read('openapi.json');
+    my $spec = decode_json($spec_str);
+    return $spec;
+}
+
+sub api_namespace {
+    my ( $self ) = @_;
+    return 'changerules';
+}
+1;
