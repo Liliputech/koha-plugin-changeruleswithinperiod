@@ -12,7 +12,13 @@
 <div id="doc3" class="row m-3">
  <div class="col-sm-12">
     <h3>Koha: Change Rules Value Within Period: Configuration</h3>
-    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>Show current circulation rules</b></a>
+    [% IF within_period %]
+    <div class="alert alert-danger" role="alert">
+    We are currently within a previously defined period!
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#savedrulesmodal">show saved data</button>
+    </div>
+    [% END %]
+    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>Show circulation rules</b></a>
     <form method="get">
         <input type="hidden" name="class" value="[% CLASS %]"/>
         <input type="hidden" name="method" value="[% METHOD %]"/>
@@ -47,4 +53,35 @@
     </form>
   </div>
 </div>
+[% IF within_period %]
+<div class="modal fade" id="savedrulesmodal" tabindex="-1" role="dialog" aria-labelledby="Saved CircRules" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="savedrulestitle">Saved CircRules</h5>
+      </div>
+      <div class="modal-body">
+      <table class="table"
+      <thead>
+      <tr>
+      <td>Rule id</td>
+      <td>Rule value</td>
+      </tr>
+      </thead>
+      <tbody>
+      [% FOREACH rule IN saved_rules %]
+      	 <tr>
+            <td>[% rule.id %]</td><td>[% rule.rule_value %]</td>
+	 </tr>
+      [% END %]
+      </tbody>
+      </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+[% END %]
 [% INCLUDE 'intranet-bottom.inc' %]

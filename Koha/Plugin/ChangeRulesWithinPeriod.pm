@@ -102,7 +102,7 @@ sub set_new_rule_value {
     $sth->execute( $rule_value, $rule_name );
 }
 
-sub restore_circulation_rules {
+sub get_saved_rules {
     my ( $self ) = @_;
     my $dbh = C4::Context->dbh;
     my $saved_values = $self->get_qualified_table_name('saved_rules_values');
@@ -112,6 +112,15 @@ sub restore_circulation_rules {
     while ( my $data = $sth->fetchrow_hashref ) {
         push( @previous_rules, $data );
     }
+    return @previous_rules;
+}
+
+sub restore_circulation_rules {
+    my ( $self ) = @_;
+    my $dbh = C4::Context->dbh;
+    my $saved_values = $self->get_qualified_table_name('saved_rules_values');
+    my @previous_rules = $self->get_saved_rules();
+    my $sth;
     foreach my $rule (@previous_rules) {
         $sth = $dbh->prepare("UPDATE circulation_rules SET rule_value=? WHERE id=?");
         $sth->execute($rule->{'rule_value'}, $rule->{'id'});
@@ -120,13 +129,24 @@ sub restore_circulation_rules {
     }
 }
 
+sub is_within_period {
+    my ( $self ) = @_;
+    my $today = DateTime->now->truncate(to => 'day')->ymd('');
+    my $start_date = dt_from_string($self->retrieve_data('start_date'), 'iso')->ymd('');
+    my $end_date = dt_from_string($self->retrieve_data('end_date'), 'iso')->ymd('');
+
+    if ($today < $start_date) { return 0; }
+    if ($today > $end_date) { return 0; }
+    return 1;
+}
+
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
 
     unless ( $cgi->param('save') ) {
         my $template = $self->get_template({ file => 'configure.tt' });
-
+	my @saved_rules = $self->get_saved_rules();
         ## Grab the values we already have for our settings, if any exist
         $template->param(
             start_date     => $self->retrieve_data('start_date'),
@@ -134,6 +154,8 @@ sub configure {
             rule_name      => $self->retrieve_data('rule_name'),
             rule_new_value => $self->retrieve_data('rule_new_value'),
 	    ignore_zero    => $self->retrieve_data('ignore_zero'),
+	    within_period  => $self->is_within_period(),
+	    saved_rules    => \@saved_rules,
         );
 
         $self->output_html( $template->output() );
