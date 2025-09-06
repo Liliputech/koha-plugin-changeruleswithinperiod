@@ -106,7 +106,12 @@ sub get_saved_rules {
     my ( $self ) = @_;
     my $dbh = C4::Context->dbh;
     my $saved_values = $self->get_qualified_table_name('saved_rules_values');
-    my $sth = $dbh->prepare("SELECT * FROM $saved_values");
+    my $sth = $dbh->prepare("
+       SELECT backup.*, branchcode, categorycode, itemtype, rule_name
+       FROM $saved_values backup
+       LEFT JOIN circulation_rules
+       ON backup.id=circulation_rules.id
+       ");
     $sth->execute();
     my @previous_rules;
     while ( my $data = $sth->fetchrow_hashref ) {

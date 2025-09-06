@@ -64,14 +64,23 @@
       <table class="table"
       <thead>
       <tr>
-      <td>Rule id</td>
-      <td>Rule value</td>
+      <th>Rule id</th>
+      <th>Branchcode</th>
+      <th>Categorycode</th>
+      <th>Itemtype</th>
+      <th>Rule name</th>
+      <th>Rule value</th>
       </tr>
       </thead>
       <tbody>
       [% FOREACH rule IN saved_rules %]
       	 <tr>
-            <td>[% rule.id %]</td><td>[% rule.rule_value %]</td>
+         <td>[% rule.id %]</td>
+	 <td>[% rule.branchcode %]</td>
+	 <td>[% rule.categorycode %]</td>
+	 <td>[% rule.itemtype %]</td>
+	 <td>[% rule.rule_name %]</td>
+	 <th>[% rule.rule_value %]</th>
 	 </tr>
       [% END %]
       </tbody>
