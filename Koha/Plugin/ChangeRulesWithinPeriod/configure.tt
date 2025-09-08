@@ -9,7 +9,7 @@
 
 <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Change Rules Within Period &rsaquo; Configuration</div>
 
-<div id="doc3" class="row m-3">
+<div id="doc3" class="row m-5">
  <div class="col-sm-12">
     <h3>Koha: Change Rules Value Within Period: Configuration</h3>
     [% IF within_period %]

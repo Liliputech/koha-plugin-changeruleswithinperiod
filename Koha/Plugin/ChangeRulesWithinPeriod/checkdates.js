@@ -1,27 +1,38 @@
-$(document).ready(function() {
+function changeDisplay(start_date, end_date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+
+    if (today >= startDate && today < endDate) {
+	$('#changerules-in').removeClass('d-none');
+	$('#changerules-out').addClass('d-none');
+    }
+}
+
+$(document).ready(async function() {
     const smartrulespath = '/cgi-bin/koha/admin/smart-rules.pl';
     if (window.location.pathname.startsWith(smartrulespath)) {
-	fetch('/api/v1/contrib/changerules/static/modal.html')
-	    .then(response => response.text())
-	    .then(html => {$('body').append(html)})
-	    .catch(error => {
-		console.error('Error fetching the Modal file:', error)});
+	try {
+	    const htmlResponse = await fetch('/api/v1/contrib/changerules/static/changerules.html');
+	    if (!htmlResponse.ok)
+		throw new Error('error while fetching static ressources');
 
-	fetch('/api/v1/contrib/changerules/config')
-	    .then(response => response.json())
-	    .then(data => {
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
+	    const htmlContent = await htmlResponse.text();
+	    $('h1.parameters').append(htmlContent);
 
-		const startDate = data.start_date ? new Date(data.start_date) : null;
-		const endDate = data.end_date ? new Date(data.end_date) : null;
+	    const apiResponse = await fetch('/api/v1/contrib/changerules/config');
+	    if (!apiResponse.ok)
+		throw new Error('error while fetching changerules config');
 
-		if (startDate && endDate && today >= startDate && today <= endDate) {
-		    $('#changerulesmodal').modal('show');
-		}
-	    })
-	    .catch(error => {
-		console.error('Error fetching the plugin settings :', error);
-	    });
+	    const data = await apiResponse.json();
+	    if ( !data.start_date || !data.end_date )
+		return;
+
+	    changeDisplay(data.start_date, data.end_date);
+	}
+	catch {
+	    console.error('Error fetching ressources :', error);
+	};
     }
 });

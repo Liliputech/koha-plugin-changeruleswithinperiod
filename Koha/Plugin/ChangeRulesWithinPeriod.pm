@@ -11,7 +11,7 @@ use Mojo::JSON qw(decode_json);
 use Koha::DateUtils qw( dt_from_string );
 
 ## Here we set our plugin version
-our $VERSION = "1";
+our $VERSION = "1.1";
 our $MINIMUM_VERSION = "24.11";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -19,7 +19,7 @@ our $metadata = {
     name            => 'Change Rules Within Period',
     author          => 'Arthur Suzuki',
     date_authored   => '2025-08-11',
-    date_updated    => "2025-08-11",
+    date_updated    => '2025-09-08',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -139,7 +139,7 @@ sub is_within_period {
     my $today = DateTime->now->truncate(to => 'day')->ymd('');
     my $start_date = dt_from_string($self->retrieve_data('start_date'), 'iso')->ymd('');
     my $end_date = dt_from_string($self->retrieve_data('end_date'), 'iso')->ymd('');
-
+    return 0 unless ( $end_date > $start_date);
     if ($today < $start_date) { return 0; }
     if ($today > $end_date) { return 0; }
     return 1;

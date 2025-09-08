@@ -1,5 +1,5 @@
 {
-  "/modal.html": {
+  "/changerules.html": {
     "get": {
       "x-mojo-to": "Static#get",
       "tags": [
