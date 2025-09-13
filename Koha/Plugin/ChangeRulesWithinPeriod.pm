@@ -149,23 +149,7 @@ sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
 
-    unless ( $cgi->param('save') ) {
-        my $template = $self->get_template({ file => 'configure.tt' });
-	my @saved_rules = $self->get_saved_rules();
-        ## Grab the values we already have for our settings, if any exist
-        $template->param(
-            start_date     => $self->retrieve_data('start_date'),
-            end_date       => $self->retrieve_data('end_date'),
-            rule_name      => $self->retrieve_data('rule_name'),
-            rule_new_value => $self->retrieve_data('rule_new_value'),
-	    ignore_zero    => $self->retrieve_data('ignore_zero'),
-	    within_period  => $self->is_within_period(),
-	    saved_rules    => \@saved_rules,
-        );
-
-        $self->output_html( $template->output() );
-    }
-    else {
+    if ( $cgi->param('save') ) {
         $self->store_data(
             {
                 start_date     => $cgi->param('start_date'),
@@ -175,10 +159,24 @@ sub configure {
 		ignore_zero    => $cgi->param('ignore_zero'),
 		active         => $self->is_within_period(),
             }
-        );
-	print $self->go_home();
-	return;
+	);
     }
+
+    my $template = $self->get_template({ file => 'configure.tt' });
+    my @saved_rules = $self->get_saved_rules();
+    ## Grab the values we already have for our settings, if any exist
+    $template->param(
+	start_date     => $self->retrieve_data('start_date'),
+	end_date       => $self->retrieve_data('end_date'),
+	rule_name      => $self->retrieve_data('rule_name'),
+	rule_new_value => $self->retrieve_data('rule_new_value'),
+	ignore_zero    => $self->retrieve_data('ignore_zero'),
+	within_period  => $self->is_within_period(),
+	saved_rules    => \@saved_rules,
+	saved_config   => $cgi->param('save')
+    );
+    $self->output_html( $template->output() );
+    return;
 }
 
 =head3 cronjob_nightly
