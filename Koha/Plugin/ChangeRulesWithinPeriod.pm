@@ -173,6 +173,7 @@ sub configure {
                 rule_name      => $cgi->param('rule_name'),
                 rule_new_value => $cgi->param('rule_new_value'),
 		ignore_zero    => $cgi->param('ignore_zero'),
+		active         => $self->is_within_period(),
             }
         );
 	print $self->go_home();
@@ -188,34 +189,30 @@ Plugin hook running code from a cron job
 
 sub cronjob_nightly {
     my ( $self ) = @_;
-    my $today = DateTime->now->truncate(to => 'day')->ymd('');
-    my $start_date = dt_from_string($self->retrieve_data('start_date'), 'iso')->ymd('');
-    my $end_date = dt_from_string($self->retrieve_data('end_date'), 'iso')->ymd('');
+    my $is_active = $self->retrieve_data('active');
+    my $is_within_period = $self->is_within_period();
 
-    if ( $today < $start_date ) {
-        print "nothing to do : before start_date";
-        return;
-    }
-
-    if ( $today == $start_date ) {
-        print "backing up and setting rule to its new value";
+    if ( $is_within_period and !$is_active ) {
+	print "backing up rules values";
         $self->backup_circulation_rules();
         $self->set_new_rule_value();
+	$self->store_data( { active => 1 } );
         return;
     }
 
-    if ( $today == $end_date ) {
+    if ( !$is_within_period and $is_active ) {
         print "restoring previous rules values";
-        $self->restore_circulation_rules();
+	$self->restore_circulation_rules();
+	$self->store_data( { active => 0 } );
         return;
     }
 
-    if ( $today > $end_date ) {
-        print "nothing to do : after end_date";
-        return;
+    if ( $is_within_period ) {
+	print "within period but nothing to do";
+	return;
     }
 
-    print "nothing to do : within period";
+    print "out of period : nothing to do";
     return;
 }
 
