@@ -11,15 +11,15 @@ use Mojo::JSON qw(decode_json);
 use Koha::DateUtils qw( dt_from_string );
 
 ## Here we set our plugin version
-our $VERSION = "1.1";
-our $MINIMUM_VERSION = "24.11";
+our $VERSION = "1.2";
+our $MINIMUM_VERSION = "23.11";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
     name            => 'Change Rules Within Period',
     author          => 'Arthur Suzuki',
     date_authored   => '2025-08-11',
-    date_updated    => '2025-09-08',
+    date_updated    => '2025-09-14',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -148,16 +148,20 @@ sub is_within_period {
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
+    my $rule_name = "issuelength";
+
+    if ( $cgi->param('rule_name') ) {
+	$rule_name = $cgi->param('rule_name');
+    }
 
     if ( $cgi->param('save') ) {
         $self->store_data(
             {
                 start_date     => $cgi->param('start_date'),
                 end_date       => $cgi->param('end_date'),
-                rule_name      => $cgi->param('rule_name'),
+                rule_name      => $rule_name,
                 rule_new_value => $cgi->param('rule_new_value'),
 		ignore_zero    => $cgi->param('ignore_zero'),
-		active         => $self->is_within_period(),
             }
 	);
     }
@@ -171,7 +175,7 @@ sub configure {
 	rule_name      => $self->retrieve_data('rule_name'),
 	rule_new_value => $self->retrieve_data('rule_new_value'),
 	ignore_zero    => $self->retrieve_data('ignore_zero'),
-	within_period  => $self->is_within_period(),
+	within_period  => $self->retrieve_data('active'),
 	saved_rules    => \@saved_rules,
 	saved_config   => $cgi->param('save')
     );

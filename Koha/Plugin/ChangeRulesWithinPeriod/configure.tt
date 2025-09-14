@@ -50,29 +50,32 @@
         <input type="hidden" name="method" value="[% METHOD %]"/>
         <div class="rows"><ol>
         <li>
-        <span class="label start_date">From date: </span>
-        <input type="date" name="start_date" value="[% start_date %]" />
+            <span class="label start_date">From date: </span>
+            <input type="date" name="start_date" value="[% start_date %]" />
         </li>
-
         <li>
-        <span class="label end_date">To date: </span>
-        <input type="date" name="end_date" value="[% end_date %]" />
+            <span class="label end_date">To date: </span>
+            <input type="date" name="end_date" value="[% end_date %]" />
         </li>
-
         <li>
-        <span class="label rule_name">Rule name: </span>
-        <input type="text" name="rule_name" value="[% rule_name %]" />
+            <span class="label rule_new_value">New value: </span>
+            <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
         </li>
-
         <li>
-        <span class="label rule_new_value">New rule value: </span>
-        <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
+            <span class="label ignore_zero">Ignore zero: </span>
+            <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
         </li>
-
         <li>
-        <span class="label ignore_zero">Ignore zero : </span>
-        <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
+          <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">Advanced settings</a>
         </li>
+        <div class="collapse" id="advanced_settings">
+            <div class="card card-body">
+              <li>
+                <span class="label rule_name">Rule name: </span>
+                <input type="text" name="rule_name" value="[% rule_name %]" />
+              </li>
+            </div>
+        </div>
         </ol></div>
         <input type="hidden" name="save" value="1" />
         <input type="submit" value="Save configuration" />
