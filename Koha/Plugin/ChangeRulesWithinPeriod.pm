@@ -168,6 +168,7 @@ sub configure {
 
     my $template = $self->get_template({ file => 'configure.tt' });
     my @saved_rules = $self->get_saved_rules();
+    my $save = $cgi->param('save');
     ## Grab the values we already have for our settings, if any exist
     $template->param(
 	start_date     => $self->retrieve_data('start_date'),
@@ -177,7 +178,7 @@ sub configure {
 	ignore_zero    => $self->retrieve_data('ignore_zero'),
 	within_period  => $self->retrieve_data('active'),
 	saved_rules    => \@saved_rules,
-	saved_config   => $cgi->param('save')
+	saved_config   => $save,
     );
     $self->output_html( $template->output() );
     return;
