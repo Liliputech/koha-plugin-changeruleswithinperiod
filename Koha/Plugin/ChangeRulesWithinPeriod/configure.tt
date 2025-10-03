@@ -1,31 +1,35 @@
+[% TRY %]
+    [% PROCESS "$PLUGIN_DIR/i18n/${LANG}.inc" %]
+[% CATCH %]
+    [% PROCESS "$PLUGIN_DIR/i18n/default.inc" %]
+[% END %]
 [% USE KohaDates %]
 [% INCLUDE 'doc-head-open.inc' %]
- <title>Koha: Change Rules Within Period: Configuration</title>
+ <title>[% T.title %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
 </head>
 <body>
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
-
 <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Change Rules Within Period &rsaquo; Configuration</div>
 <div id="doc3" class="row m-5">
-    <h3>Koha: Change Rules Value Within Period: Configuration</h3>
+    <h3>[% T.title %]</h3>
     [% IF saved_config %]
-    <div class="alert alert-success">Settings saved</div>
+    <div class="alert alert-success">[% T.saved_settings %]</div>
     [% END %]
     [% IF within_period %]
     <div class="col-sm-6">
-        <div class="alert alert-danger" role="alert">We are currently within a previously defined period! See saved data below</div>
-        <h5>Saved CircRules</h5>
+        <div class="alert alert-danger" role="alert">[% T.within_saved_alert %]</div>
+        <h5>[% T.saved_circrules %]</h5>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Rule id</th>
-                    <th>Branchcode</th>
-                    <th>Categorycode</th>
-                    <th>Itemtype</th>
-                    <th>Rule name</th>
-                    <th>Rule value</th>
+                    <th>[% T.rule_id %]</th>
+                    <th>[% T.branchcode %]</th>
+                    <th>[% T.categorycode %]</th>
+                    <th>[% T.itype %]</th>
+                    <th>[% T.rulename %]</th>
+                    <th>[% T.rulevalue %]</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,41 +48,41 @@
     </div>
     [% END %]
     <div class="col-sm-6">
-    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>Show circulation rules</b></a>
+    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>[% T.to_circrules %]</b></a>
     <form method="get">
         <input type="hidden" name="class" value="[% CLASS %]"/>
         <input type="hidden" name="method" value="[% METHOD %]"/>
         <div class="rows"><ol>
         <li>
-            <span class="label start_date">From date: </span>
+            <span class="label start_date">[% T.start_date %]: </span>
             <input type="date" name="start_date" value="[% start_date %]" />
         </li>
         <li>
-            <span class="label end_date">To date: </span>
+            <span class="label end_date">[% T.end_date %]: </span>
             <input type="date" name="end_date" value="[% end_date %]" />
         </li>
         <li>
-            <span class="label rule_new_value">New value: </span>
+            <span class="label rule_new_value">[% T.rule_new_value %]: </span>
             <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
         </li>
         <li>
-            <span class="label ignore_zero">Ignore zero: </span>
+            <span class="label ignore_zero">[% T.ignore_zero %]: </span>
             <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
         </li>
         <li>
-          <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">Advanced settings</a>
+          <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
         </li>
         <div class="collapse" id="advanced_settings">
             <div class="card card-body">
               <li>
-                <span class="label rule_name">Rule name: </span>
+                <span class="label rule_name">[% T.rulename %]: </span>
                 <input type="text" name="rule_name" value="[% rule_name %]" />
               </li>
             </div>
         </div>
         </ol></div>
         <input type="hidden" name="save" value="1" />
-        <input type="submit" value="Save configuration" />
+        <input type="submit" value="[% T.save_config %]" />
     </form>
     </div>
 </div>

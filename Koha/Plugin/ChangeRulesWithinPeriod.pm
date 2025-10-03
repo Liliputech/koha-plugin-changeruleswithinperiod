@@ -11,7 +11,7 @@ use Mojo::JSON qw(decode_json);
 use Koha::DateUtils qw( dt_from_string );
 
 ## Here we set our plugin version
-our $VERSION = "1.2";
+our $VERSION = "1.3";
 our $MINIMUM_VERSION = "23.11";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -19,7 +19,7 @@ our $metadata = {
     name            => 'Change Rules Within Period',
     author          => 'Arthur Suzuki',
     date_authored   => '2025-08-11',
-    date_updated    => '2025-09-14',
+    date_updated    => '2025-10-03',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
