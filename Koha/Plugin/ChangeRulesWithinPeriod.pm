@@ -9,6 +9,7 @@ use C4::Context;
 use Mojo::JSON qw(decode_json);
 
 use Koha::DateUtils qw( dt_from_string );
+use Koha::Libraries;
 
 ## Here we set our plugin version
 our $VERSION = "1.3";
@@ -47,6 +48,20 @@ sub new {
     return $self;
 }
 
+## Get all libraries for the library selector
+sub get_libraries {
+    my ( $self ) = @_;
+    my @libraries;
+    my $libraries_rs = Koha::Libraries->search({}, { order_by => 'branchname' });
+    while ( my $library = $libraries_rs->next ) {
+        push @libraries, {
+            branchcode => $library->branchcode,
+            branchname => $library->branchname,
+        };
+    }
+    return @libraries;
+}
+
 ## This is the 'install' method. Any database tables or other setup that should
 ## be done when the plugin if first installed should be executed in this method.
 ## The installation method should always return true if the installation succeeded
@@ -69,13 +84,22 @@ sub backup_circulation_rules {
     my ( $self ) = @_;
     my $rule_name=$self->retrieve_data('rule_name');
     my $ignore_zero = $self->retrieve_data('ignore_zero');
+    my $library = $self->retrieve_data('library');
     my $dbh = C4::Context->dbh;
     my $query = "SELECT id, rule_value FROM circulation_rules WHERE rule_name = ?";
+    my @params = ($rule_name);
+    
     if ($ignore_zero) {
 	$query .= " AND rule_value != 0";
     }
+    
+    if ($library && $library ne '') {
+        $query .= " AND branchcode = ?";
+        push @params, $library;
+    }
+    
     my $sth = $dbh->prepare($query);
-    $sth->execute($rule_name);
+    $sth->execute(@params);
     my @previous_rules;
     while ( my $data = $sth->fetchrow_hashref() ) {
         push( @previous_rules, $data );
@@ -93,13 +117,22 @@ sub set_new_rule_value {
     my $rule_name=$self->retrieve_data('rule_name');
     my $rule_value=$self->retrieve_data('rule_new_value');
     my $ignore_zero = $self->retrieve_data('ignore_zero');
+    my $library = $self->retrieve_data('library');
     my $dbh = C4::Context->dbh;
     my $query = "UPDATE circulation_rules SET rule_value=? WHERE rule_name = ?";
+    my @params = ($rule_value, $rule_name);
+    
     if ($ignore_zero) {
 	$query .= " AND rule_value != 0";
     }
+    
+    if ($library && $library ne '') {
+        $query .= " AND branchcode = ?";
+        push @params, $library;
+    }
+    
     my $sth = $dbh->prepare($query);
-    $sth->execute( $rule_value, $rule_name );
+    $sth->execute(@params);
 }
 
 sub get_saved_rules {
@@ -162,12 +195,14 @@ sub configure {
                 rule_name      => $rule_name,
                 rule_new_value => $cgi->param('rule_new_value'),
 		ignore_zero    => $cgi->param('ignore_zero'),
+		library        => $cgi->param('library'),
             }
 	);
     }
 
     my $template = $self->get_template({ file => 'configure.tt' });
     my @saved_rules = $self->get_saved_rules();
+    my @libraries = $self->get_libraries();
     my $save = $cgi->param('save');
     ## Grab the values we already have for our settings, if any exist
     $template->param(
@@ -176,8 +211,10 @@ sub configure {
 	rule_name      => $self->retrieve_data('rule_name'),
 	rule_new_value => $self->retrieve_data('rule_new_value'),
 	ignore_zero    => $self->retrieve_data('ignore_zero'),
+	library        => $self->retrieve_data('library'),
 	within_period  => $self->retrieve_data('active'),
 	saved_rules    => \@saved_rules,
+	libraries      => \@libraries,
 	saved_config   => $save,
     );
     $self->output_html( $template->output() );

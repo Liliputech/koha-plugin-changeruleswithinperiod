@@ -15,6 +15,8 @@
         end_date="To date",
         rule_new_value="New value",
         ignore_zero="Ignore zero",
+        library="Library",
+        all_libraries="All libraries",
         advanced_settings="Advanced settings",
         save_config="Save configuration",
         alert_warning="The circulation rules might be overwritten by the ChangeRulesPlugin, check the configuration",

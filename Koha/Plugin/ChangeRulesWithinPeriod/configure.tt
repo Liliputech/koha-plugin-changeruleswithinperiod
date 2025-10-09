@@ -70,6 +70,15 @@
             <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
         </li>
         <li>
+            <span class="label library">[% T.library %]: </span>
+            <select name="library">
+                <option value=""[% UNLESS library %] selected="selected"[% END %]>[% T.all_libraries %]</option>
+                [% FOREACH lib IN libraries %]
+                    <option value="[% lib.branchcode | html %]"[% IF library == lib.branchcode %] selected="selected"[% END %]>[% lib.branchname | html %] ([% lib.branchcode | html %])</option>
+                [% END %]
+            </select>
+        </li>
+        <li>
           <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
         </li>
         <div class="collapse" id="advanced_settings">

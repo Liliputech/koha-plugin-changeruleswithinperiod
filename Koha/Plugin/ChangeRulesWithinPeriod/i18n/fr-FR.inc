@@ -15,6 +15,8 @@
         end_date="Date de fin",
         rule_new_value="Nouvelle valeur",
         ignore_zero="Ignorer zéro",
+        library="Bibliothèque",
+        all_libraries="Toutes les bibliothèques",
         advanced_settings="Paramètres avancés",
         save_config="Enregistrer la configuration",
 	alert_warning="Les règles de circulation peuvent être remplacées par le plugin ChangeRulesPlugin, vérifiez la configuration",

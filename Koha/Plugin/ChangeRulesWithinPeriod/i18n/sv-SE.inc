@@ -15,6 +15,8 @@
         end_date="Till datum",
         rule_new_value="Nytt värde",
         ignore_zero="Ignorera noll",
+        library="Bibliotek",
+        all_libraries="Alla bibliotek",
         advanced_settings="Avancerade inställningar",
         save_config="Spara konfiguration",
         alert_warning="Cirkulationsreglerna kan skrivas över av ChangeRulesPlugin, kontrollera konfigurationen",

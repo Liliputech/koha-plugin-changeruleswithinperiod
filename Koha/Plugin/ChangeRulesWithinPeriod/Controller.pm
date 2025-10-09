@@ -16,6 +16,7 @@ sub config {
             rule_name      => $plugin->retrieve_data('rule_name'),
             rule_new_value => $plugin->retrieve_data('rule_new_value'),
 	    ignore_zero    => $plugin->retrieve_data('ignore_zero'),
+	    library        => $plugin->retrieve_data('library'),
 	}
         );
 }
