@@ -22,5 +22,12 @@
         alert_warning="Cirkulationsreglerna kan skrivas över av ChangeRulesPlugin, kontrollera konfigurationen",
         alert_danger="Standardcirkulationsreglerna skrivs för närvarande över av ChangeRulesPlugin.<br>För att kontrollera de sparade värdena, gå till plugin-konfigurationen",
         configure_link="Kontrollera plugin-konfigurationen",
+        select_configuration="Välj konfiguration",
+        default_configuration="Standard (Alla bibliotek)",
+        delete_configuration="Radera",
+        confirm_delete="Är du säker på att du vill radera denna konfiguration?",
+        current_editing="Redigerar för närvarande",
+        configured_libraries="Konfigurerade bibliotek",
+        edit="Redigera",
     }
 %]

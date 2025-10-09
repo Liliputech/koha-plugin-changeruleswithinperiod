@@ -22,5 +22,12 @@
         alert_warning="The circulation rules might be overwritten by the ChangeRulesPlugin, check the configuration",
         alert_danger="The default circulation rules are currently overwritten by the ChangeRulesPlugin.<br>to check the saved values, head to the plugin configuration",
         configure_link="Check the plugin configuration",
+        select_configuration="Select Configuration",
+        default_configuration="Default (All Libraries)",
+        delete_configuration="Delete",
+        confirm_delete="Are you sure you want to delete this configuration?",
+        current_editing="Currently editing",
+        configured_libraries="Configured Libraries",
+        edit="Edit",
     }
 %]

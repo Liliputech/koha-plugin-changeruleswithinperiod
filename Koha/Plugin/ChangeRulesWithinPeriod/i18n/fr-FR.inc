@@ -22,5 +22,12 @@
 	alert_warning="Les règles de circulation peuvent être remplacées par le plugin ChangeRulesPlugin, vérifiez la configuration",
         alert_danger="Les règles de circulation par défaut sont actuellement remplacées par le plugin ChangeRulesPlugin.<br>Pour vérifier les valeurs enregistrées, rendez-vous dans la configuration du plugin",
         configure_link="Vérifier la configuration du plugin",
+        select_configuration="Sélectionner la configuration",
+        default_configuration="Par défaut (Toutes les bibliothèques)",
+        delete_configuration="Supprimer",
+        confirm_delete="Êtes-vous sûr de vouloir supprimer cette configuration ?",
+        current_editing="Modification en cours",
+        configured_libraries="Bibliothèques configurées",
+        edit="Modifier",
     }
 %]
