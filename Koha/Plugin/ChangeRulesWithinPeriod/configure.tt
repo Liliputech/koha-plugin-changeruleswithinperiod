@@ -7,6 +7,22 @@
 [% INCLUDE 'doc-head-open.inc' %]
  <title>[% T.title %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
+<style>
+.config-selector {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.config-actions {
+    margin-top: 1rem;
+}
+.delete-config {
+    color: #dc3545;
+    margin-left: 1rem;
+}
+</style>
 </head>
 <body>
 [% INCLUDE 'header.inc' %]
@@ -17,9 +33,50 @@
     [% IF saved_config %]
     <div class="alert alert-success">[% T.saved_settings %]</div>
     [% END %]
-    [% IF within_period %]
+    
+    <!-- Configuration Selector -->
+    <div class="config-selector">
+        <h4>[% T.select_configuration %]</h4>
+        <form method="get" style="display: inline;">
+            <input type="hidden" name="class" value="[% CLASS %]"/>
+            <input type="hidden" name="method" value="[% METHOD %]"/>
+            <select name="editing_library" onchange="this.form.submit()">
+                <option value="default"[% IF editing_library == 'default' %] selected="selected"[% END %]>[% T.default_configuration %]</option>
+                [% FOREACH lib IN libraries %]
+                    <option value="[% lib.branchcode | html %]"[% IF editing_library == lib.branchcode %] selected="selected"[% END %]>[% lib.branchname | html %] ([% lib.branchcode | html %])</option>
+                [% END %]
+            </select>
+        </form>
+        
+        [% IF editing_library != 'default' %]
+            <form method="get" style="display: inline;" onsubmit="return confirm('[% T.confirm_delete %]')">
+                <input type="hidden" name="class" value="[% CLASS %]"/>
+                <input type="hidden" name="method" value="[% METHOD %]"/>
+                <input type="hidden" name="delete_config" value="[% editing_library %]"/>
+                <button type="submit" class="btn btn-sm btn-danger delete-config">[% T.delete_configuration %]</button>
+            </form>
+        [% END %]
+        
+        <div class="config-actions">
+            <p><strong>[% T.current_editing %]:</strong> 
+            [% IF editing_library == 'default' %]
+                [% T.default_configuration %]
+            [% ELSE %]
+                [% FOREACH lib IN libraries %]
+                    [% IF lib.branchcode == editing_library %][% lib.branchname %] ([% lib.branchcode %])[% END %]
+                [% END %]
+            [% END %]
+            </p>
+        </div>
+    </div>
+
+    [% IF has_saved_rules %]
     <div class="col-sm-6">
-        <div class="alert alert-danger" role="alert">[% T.within_saved_alert %]</div>
+        [% IF within_period %]
+            <div class="alert alert-danger" role="alert">[% T.within_saved_alert %]</div>
+        [% ELSE %]
+            <div class="alert alert-info" role="alert">Backed-up circulation rules (currently not within period)</div>
+        [% END %]
         <h5>[% T.saved_circrules %]</h5>
         <table class="table">
             <thead>
@@ -47,43 +104,64 @@
         </table>
     </div>
     [% END %]
+    
     <div class="col-sm-6">
-    <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>[% T.to_circrules %]</b></a>
-    <form method="get">
-        <input type="hidden" name="class" value="[% CLASS %]"/>
-        <input type="hidden" name="method" value="[% METHOD %]"/>
-        <div class="rows"><ol>
-        <li>
-            <span class="label start_date">[% T.start_date %]: </span>
-            <input type="date" name="start_date" value="[% start_date %]" />
-        </li>
-        <li>
-            <span class="label end_date">[% T.end_date %]: </span>
-            <input type="date" name="end_date" value="[% end_date %]" />
-        </li>
-        <li>
-            <span class="label rule_new_value">[% T.rule_new_value %]: </span>
-            <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
-        </li>
-        <li>
-            <span class="label ignore_zero">[% T.ignore_zero %]: </span>
-            <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
-        </li>
-        <li>
-          <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
-        </li>
-        <div class="collapse" id="advanced_settings">
-            <div class="card card-body">
-              <li>
-                <span class="label rule_name">[% T.rulename %]: </span>
-                <input type="text" name="rule_name" value="[% rule_name %]" />
-              </li>
+        <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>[% T.to_circrules %]</b></a>
+        
+        <!-- Configuration Form -->
+        <form method="get">
+            <input type="hidden" name="class" value="[% CLASS %]"/>
+            <input type="hidden" name="method" value="[% METHOD %]"/>
+            <input type="hidden" name="editing_library" value="[% editing_library %]"/>
+            <div class="rows"><ol>
+            <li>
+                <span class="label start_date">[% T.start_date %]: </span>
+                <input type="date" name="start_date" value="[% start_date %]" />
+            </li>
+            <li>
+                <span class="label end_date">[% T.end_date %]: </span>
+                <input type="date" name="end_date" value="[% end_date %]" />
+            </li>
+            <li>
+                <span class="label rule_new_value">[% T.rule_new_value %]: </span>
+                <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
+            </li>
+            <li>
+                <span class="label ignore_zero">[% T.ignore_zero %]: </span>
+                <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
+            </li>
+            <li>
+              <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
+            </li>
+            <div class="collapse" id="advanced_settings">
+                <div class="card card-body">
+                  <li>
+                    <span class="label rule_name">[% T.rulename %]: </span>
+                    <input type="text" name="rule_name" value="[% rule_name %]" />
+                  </li>
+                </div>
             </div>
+            </ol></div>
+            <input type="hidden" name="save" value="1" />
+            <input type="submit" value="[% T.save_config %]" />
+        </form>
+        
+        <!-- Configured Libraries Summary -->
+        [% IF configured_libraries.size > 0 %]
+        <div class="mt-4">
+            <h5>[% T.configured_libraries %]</h5>
+            <ul class="list-group">
+                [% FOREACH lib_code IN configured_libraries %]
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        [% FOREACH lib IN libraries %]
+                            [% IF lib.branchcode == lib_code %][% lib.branchname %] ([% lib.branchcode %])[% END %]
+                        [% END %]
+                        <a href="?class=[% CLASS %]&method=[% METHOD %]&editing_library=[% lib_code %]" class="btn btn-sm btn-outline-primary">[% T.edit %]</a>
+                    </li>
+                [% END %]
+            </ul>
         </div>
-        </ol></div>
-        <input type="hidden" name="save" value="1" />
-        <input type="submit" value="[% T.save_config %]" />
-    </form>
+        [% END %]
     </div>
 </div>
 [% INCLUDE 'intranet-bottom.inc' %]
