@@ -29,5 +29,8 @@
         current_editing="Modification en cours",
         configured_libraries="Bibliothèques configurées",
         edit="Modifier",
+        alert_warning_label="Message d'avertissement (affiché lorsque les règles peuvent être remplacées)",
+        alert_danger_label="Message de remplacement (affiché lorsque les règles sont actuellement remplacées)",
+        configure_link_label="Texte du lien (pour le lien de configuration du plugin)",
     }
 %]

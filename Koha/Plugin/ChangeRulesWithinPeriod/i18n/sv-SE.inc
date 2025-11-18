@@ -29,5 +29,8 @@
         current_editing="Redigerar för närvarande",
         configured_libraries="Konfigurerade bibliotek",
         edit="Redigera",
+        alert_warning_label="Varningsmeddelande (visas när regler kan skrivas över)",
+        alert_danger_label="Överskrivningsmeddelande (visas när regler för närvarande är överskrivna)",
+        configure_link_label="Länktext (för plugin-konfigurationslänk)",
     }
 %]

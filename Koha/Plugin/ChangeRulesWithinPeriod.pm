@@ -12,7 +12,7 @@ use Koha::Libraries;
 use JSON qw( encode_json decode_json );
 
 ## Here we set our plugin version
-our $VERSION = "1.4";
+our $VERSION = "1.5";
 our $MINIMUM_VERSION = "23.11";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -20,7 +20,7 @@ our $metadata = {
     name            => 'Change Rules Within Period',
     author          => 'Arthur Suzuki',
     date_authored   => '2025-08-11',
-    date_updated    => '2025-10-10',
+    date_updated    => '2025-11-18',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -88,6 +88,9 @@ sub migrate_to_multi_config {
             rule_new_value => $self->retrieve_data('rule_new_value') || '',
             ignore_zero    => $self->retrieve_data('ignore_zero') || '0',
             library        => '',
+            alert_warning  => $self->retrieve_data('alert_warning'),
+            alert_danger   => $self->retrieve_data('alert_danger'),
+            configure_link => $self->retrieve_data('configure_link'),
         },
         library_configs => {}
     };
@@ -277,6 +280,9 @@ sub configure {
             rule_name      => $rule_name,
             rule_new_value => $cgi->param('rule_new_value'),
             ignore_zero    => $cgi->param('ignore_zero'),
+            alert_warning  => $cgi->param('alert_warning'),
+            alert_danger   => $cgi->param('alert_danger'),
+            configure_link => $cgi->param('configure_link'),
         };
 
         if ($editing_library eq 'default') {
@@ -335,6 +341,9 @@ sub configure {
 	libraries           => \@libraries,
 	configured_libraries => \@configured_libraries,
 	saved_config        => $save,
+	alert_warning       => $current_config->{alert_warning},
+	alert_danger        => $current_config->{alert_danger},
+	configure_link     => $current_config->{configure_link},
     );
     $self->output_html( $template->output() );
     return;

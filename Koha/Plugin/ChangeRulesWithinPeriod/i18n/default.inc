@@ -29,5 +29,8 @@
         current_editing="Currently editing",
         configured_libraries="Configured Libraries",
         edit="Edit",
+        alert_warning_label="Warning message (displayed when rules might be overwritten)",
+        alert_danger_label="Override message (displayed when rules are currently overwritten)",
+        configure_link_label="Link text (for plugin configuration link)",
     }
 %]

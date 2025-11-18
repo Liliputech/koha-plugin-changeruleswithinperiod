@@ -22,6 +22,9 @@
     color: #dc3545;
     margin-left: 1rem;
 }
+.messages input {
+    width: 100%;
+}
 </style>
 </head>
 <body>
@@ -113,37 +116,53 @@
             <input type="hidden" name="class" value="[% CLASS %]"/>
             <input type="hidden" name="method" value="[% METHOD %]"/>
             <input type="hidden" name="editing_library" value="[% editing_library %]"/>
-            <div class="rows"><ol>
-            <li>
-                <span class="label start_date">[% T.start_date %]: </span>
-                <input type="date" name="start_date" value="[% start_date %]" />
-            </li>
-            <li>
-                <span class="label end_date">[% T.end_date %]: </span>
-                <input type="date" name="end_date" value="[% end_date %]" />
-            </li>
-            <li>
-                <span class="label rule_new_value">[% T.rule_new_value %]: </span>
-                <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
-            </li>
-            <li>
-                <span class="label ignore_zero">[% T.ignore_zero %]: </span>
-                <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
-            </li>
-            <li>
-              <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
-            </li>
-            <div class="collapse" id="advanced_settings">
-                <div class="card card-body">
-                  <li>
-                    <span class="label rule_name">[% T.rulename %]: </span>
-                    <input type="text" name="rule_name" value="[% rule_name %]" />
-                  </li>
+            <div class="rows">
+                <ol>
+                    <li>
+                        <span class="label start_date">[% T.start_date %]: </span>
+                        <input type="date" name="start_date" value="[% start_date %]" />
+                    </li>
+                    <li>
+                        <span class="label end_date">[% T.end_date %]: </span>
+                        <input type="date" name="end_date" value="[% end_date %]" />
+                    </li>
+                    <li>
+                        <span class="label rule_new_value">[% T.rule_new_value %]: </span>
+                        <input type="text" name="rule_new_value" value="[% rule_new_value %]" />
+                    </li>
+                    <li>
+                        <span class="label ignore_zero">[% T.ignore_zero %]: </span>
+                        <input type="checkbox" name="ignore_zero" [% IF ignore_zero %]checked="checked"[% END %]/>
+                    </li>
+                    <li>
+                        <a class="btn btn-primary" data-bs-toggle="collapse" href="#advanced_settings" role="button" aria-expanded="false" aria-controls="collapseExample">[% T.advanced_settings %]</a>
+                    </li>
+                </ol>
+                <input type="hidden" name="save" value="1" />
+                <input type="submit" value="[% T.save_config %]" />
+                <div class="collapse" id="advanced_settings">
+                    <div class="card card-body">
+                      <li>
+                        <span class="label rule_name">[% T.rulename %]: </span>
+                        <input type="text" name="rule_name" value="[% rule_name %]" />
+                      </li>
+                    </div>
                 </div>
+                <div class="messages"><ol>
+                    <li>
+                      <span class="label alert_warning">[% T.alert_warning_label %]: </span>
+                      <input type="text" name="alert_warning" value="[% alert_warning || T.alert_warning %]"/>
+                    </li>
+                    <li>
+                      <span class="label alert_danger">[% T.alert_danger_label %]: </span>
+                      <input type="text" name="alert_danger" value="[% alert_danger || T.alert_danger %]"/>
+                    </li>
+                    <li>
+                      <span class="label configure_link">[% T.configure_link_label %]: </span>
+                      <input type="text" name="configure_link" value="[% configure_link || T.configure_link %]"/>
+                    </li>
+                </div></ol>
             </div>
-            </ol></div>
-            <input type="hidden" name="save" value="1" />
-            <input type="submit" value="[% T.save_config %]" />
         </form>
         
         <!-- Configured Libraries Summary -->
