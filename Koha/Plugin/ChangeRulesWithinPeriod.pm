@@ -275,14 +275,14 @@ sub configure {
     if ( $cgi->param('save') ) {
         # Save configuration for the currently selected library
         my $config_data = {
-            start_date     => $cgi->param('start_date'),
-            end_date       => $cgi->param('end_date'),
+            start_date     => scalar $cgi->param('start_date'),
+            end_date       => scalar $cgi->param('end_date'),
             rule_name      => $rule_name,
-            rule_new_value => $cgi->param('rule_new_value'),
-            ignore_zero    => $cgi->param('ignore_zero'),
-            alert_warning  => $cgi->param('alert_warning'),
-            alert_danger   => $cgi->param('alert_danger'),
-            configure_link => $cgi->param('configure_link'),
+            rule_new_value => scalar $cgi->param('rule_new_value'),
+            ignore_zero    => scalar $cgi->param('ignore_zero'),
+            alert_warning  => scalar $cgi->param('alert_warning'),
+            alert_danger   => scalar $cgi->param('alert_danger'),
+            configure_link => scalar $cgi->param('configure_link'),
         };
 
         if ($editing_library eq 'default') {
