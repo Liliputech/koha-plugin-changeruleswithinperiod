@@ -40,7 +40,7 @@
     <!-- Configuration Selector -->
     <div class="config-selector">
         <h4>[% T.select_configuration %]</h4>
-        <form method="get" style="display: inline;">
+        <form method="get" style="display: inline;" accept-charset="utf-8">
             <input type="hidden" name="class" value="[% CLASS %]"/>
             <input type="hidden" name="method" value="[% METHOD %]"/>
             <select name="editing_library" onchange="this.form.submit()">
@@ -151,15 +151,15 @@
                 <div class="messages"><ol>
                     <li>
                       <span class="label alert_warning">[% T.alert_warning_label %]: </span>
-                      <input type="text" name="alert_warning" value="[% alert_warning || T.alert_warning %]"/>
+                      <input type="text" name="alert_warning" value="[% alert_warning || T.alert_warning | html %]"/>
                     </li>
                     <li>
                       <span class="label alert_danger">[% T.alert_danger_label %]: </span>
-                      <input type="text" name="alert_danger" value="[% alert_danger || T.alert_danger %]"/>
+                      <input type="text" name="alert_danger" value="[% alert_danger || T.alert_danger | html %]"/>
                     </li>
                     <li>
                       <span class="label configure_link">[% T.configure_link_label %]: </span>
-                      <input type="text" name="configure_link" value="[% configure_link || T.configure_link %]"/>
+                      <input type="text" name="configure_link" value="[% configure_link || T.configure_link | html %]"/>
                     </li>
                 </div></ol>
             </div>

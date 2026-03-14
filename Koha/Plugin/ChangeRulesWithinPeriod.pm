@@ -10,9 +10,10 @@ use C4::Context;
 use Koha::DateUtils qw( dt_from_string );
 use Koha::Libraries;
 use JSON qw( encode_json decode_json );
+use Encode qw(decode encode);
 
 ## Here we set our plugin version
-our $VERSION = "1.5";
+our $VERSION = "1.6";
 our $MINIMUM_VERSION = "23.11";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -25,9 +26,9 @@ our $metadata = {
     maximum_version => undef,
     version         => $VERSION,
     description     => 'This plugin helps you define a date range '
-	. 'within which a rule can be set to a new value. '
-	. 'After the end date the rule is set back to its old value. '
-	. 'Warning : All circulation rules will be affected by the change.',
+        . 'within which a rule can be set to a new value. '
+        . 'After the end date the rule is set back to its old value. '
+        . 'Warning : All circulation rules will be affected by the change.',
     namespace       => 'changeruleswithinperiod',
 };
 
@@ -70,54 +71,27 @@ sub get_multi_config {
     if ($config_json) {
         return decode_json($config_json);
     }
-    
-    # If no multi-config exists, migrate from old single config
-    return $self->migrate_to_multi_config();
-}
 
-## Migrate existing single configuration to multi-config structure
-sub migrate_to_multi_config {
-    my ( $self ) = @_;
-    
-    # Previous version had no library field, so migrate old config to default
-    my $config = {
-        default => {
-            start_date     => $self->retrieve_data('start_date') || '',
-            end_date       => $self->retrieve_data('end_date') || '',
-            rule_name      => $self->retrieve_data('rule_name') || 'issuelength',
-            rule_new_value => $self->retrieve_data('rule_new_value') || '',
-            ignore_zero    => $self->retrieve_data('ignore_zero') || '0',
+    my $default_conf->{default} = {
+            start_date     => '',
+            end_date       => '',
+            rule_name      => 'issuelength',
+            rule_new_value => '',
+            ignore_zero    => '0',
             library        => '',
-            alert_warning  => $self->retrieve_data('alert_warning'),
-            alert_danger   => $self->retrieve_data('alert_danger'),
-            configure_link => $self->retrieve_data('configure_link'),
-        },
-        library_configs => {}
-    };
-    
-    $self->store_data({ multi_config => encode_json($config) });
-    return $config;
-}
+        };
 
-## Store multi-configuration
-sub store_multi_config {
-    my ( $self, $config ) = @_;
-    $self->store_data({ multi_config => encode_json($config) });
+    return $default_conf;
 }
 
 ## Get configuration for a specific library (falls back to default)
 sub get_config_for_library {
     my ( $self, $library_code ) = @_;
     my $multi_config = $self->get_multi_config();
-    
-    # Handle explicit 'default' request
-    if ($library_code && $library_code eq 'default') {
-        return $multi_config->{default};
-    }
-    
+
     # Return library-specific config if it exists
-    if ($library_code && exists $multi_config->{library_configs}->{$library_code}) {
-        return $multi_config->{library_configs}->{$library_code};
+    if ($library_code && exists $multi_config->{$library_code}) {
+        return $multi_config->{$library_code};
     }
     
     # Fall back to default config
@@ -128,7 +102,7 @@ sub get_config_for_library {
 sub get_configured_libraries {
     my ( $self ) = @_;
     my $multi_config = $self->get_multi_config();
-    return keys %{$multi_config->{library_configs}};
+    return keys %{$multi_config};
 }
 
 ## This is the 'install' method. Any database tables or other setup that should
@@ -160,13 +134,13 @@ sub backup_circulation_rules {
     my @params = ($rule_name);
     
     if ($ignore_zero) {
-	$query .= " AND rule_value != 0";
+        $query .= " AND rule_value != 0";
     }
 
     $query .= " AND branchcode ";
     my $branchcode = "IS NULL";
     if ( $library_code ) {
-	$branchcode = "= ?";
+        $branchcode = "= ?";
         push @params, $library_code;
     }
     $query .= $branchcode;
@@ -179,7 +153,7 @@ sub backup_circulation_rules {
     }
     my $saved_values = $self->get_qualified_table_name('saved_rules_values');
     foreach my $rule (@previous_rules) {
-	my $query = "INSERT INTO $saved_values (id, rule_value) VALUES ( ? , ? )";
+        my $query = "INSERT INTO $saved_values (id, rule_value) VALUES ( ? , ? )";
         $sth = $dbh->prepare($query);
         $sth->execute($rule->{'id'}, $rule->{'rule_value'});
     }
@@ -196,13 +170,13 @@ sub set_new_rule_value {
     my @params = ($rule_value, $rule_name);
     
     if ($ignore_zero) {
-	$query .= " AND rule_value != 0";
+        $query .= " AND rule_value != 0";
     }
 
     $query .= " AND branchcode ";
     my $branchcode = "IS NULL";
     if ( $library_code ) {
-	$branchcode = "= ?";
+        $branchcode = "= ?";
         push @params, $library_code;
     }
     $query .= $branchcode;
@@ -238,8 +212,8 @@ sub restore_circulation_rules {
     foreach my $rule (@previous_rules) {
         $sth = $dbh->prepare("UPDATE circulation_rules SET rule_value=? WHERE id=?");
         $sth->execute($rule->{'rule_value'}, $rule->{'id'});
-	$sth = $dbh->prepare("DELETE FROM $saved_values WHERE id=?");
-	$sth->execute($rule->{'id'});
+        $sth = $dbh->prepare("DELETE FROM $saved_values WHERE id=?");
+        $sth->execute($rule->{'id'});
     }
 }
 
@@ -265,7 +239,7 @@ sub configure {
     my $rule_name = "issuelength";
 
     if ( $cgi->param('rule_name') ) {
-	$rule_name = $cgi->param('rule_name');
+        $rule_name = $cgi->param('rule_name');
     }
 
     # Get current editing context (which library config we're editing)
@@ -274,51 +248,35 @@ sub configure {
 
     if ( $cgi->param('save') ) {
         # Save configuration for the currently selected library
+        # Ensure all CGI parameters are properly encoded for JSON storage
         my $config_data = {
-            start_date     => scalar $cgi->param('start_date'),
-            end_date       => scalar $cgi->param('end_date'),
+            start_date     => $cgi->param('start_date') || '',
+            end_date       => $cgi->param('end_date') || '',
             rule_name      => $rule_name,
-            rule_new_value => scalar $cgi->param('rule_new_value'),
+            rule_new_value => $cgi->param('rule_new_value') || '',
             ignore_zero    => scalar $cgi->param('ignore_zero'),
-            alert_warning  => scalar $cgi->param('alert_warning'),
-            alert_danger   => scalar $cgi->param('alert_danger'),
-            configure_link => scalar $cgi->param('configure_link'),
         };
 
-        if ($editing_library eq 'default') {
-            $multi_config->{default} = $config_data;
-        } else {
-            $multi_config->{library_configs}->{$editing_library} = $config_data;
-        }
-
-        $self->store_multi_config($multi_config);
+        $multi_config->{$editing_library} = $config_data;
+        $multi_config->{default}->{alert_warning}  = $cgi->param('alert_warning')  || '';
+        $multi_config->{default}->{alert_danger}   = $cgi->param('alert_danger')   || '';
+        $multi_config->{default}->{configure_link} = $cgi->param('configure_link') || '';
+	$self->store_data({ multi_config => encode('utf8',encode_json($multi_config)) });
     }
 
     # Handle library configuration deletion
     if ( $cgi->param('delete_config') ) {
         my $library_to_delete = $cgi->param('delete_config');
-        if ($library_to_delete ne 'default' && exists $multi_config->{library_configs}->{$library_to_delete}) {
-            delete $multi_config->{library_configs}->{$library_to_delete};
-            $self->store_multi_config($multi_config);
+        if ($library_to_delete ne 'default' && exists $multi_config->{$library_to_delete}) {
+            delete $multi_config->{$library_to_delete};
+	    $self->store_data({ multi_config => encode('utf8', encode_json($multi_config)) });
             # Reset editing context to default after deletion
             $editing_library = 'default';
         }
     }
 
     # Get current configuration for the editing context
-    my $current_config;
-    if ($editing_library eq 'default') {
-        $current_config = $multi_config->{default};
-    } else {
-        $current_config = $multi_config->{library_configs}->{$editing_library} || {
-            start_date     => '',
-            end_date       => '',
-            rule_name      => 'issuelength',
-            rule_new_value => '',
-            ignore_zero    => '0',
-            library        => '',
-        };
-    }
+    my $current_config = $multi_config->{$editing_library};
 
     my $template = $self->get_template({ file => 'configure.tt' });
     my @saved_rules = $self->get_saved_rules();
@@ -328,22 +286,22 @@ sub configure {
 
     ## Pass current configuration and multi-config context to template
     $template->param(
-	start_date          => $current_config->{start_date},
-	end_date            => $current_config->{end_date},
-	rule_name           => $current_config->{rule_name},
-	rule_new_value      => $current_config->{rule_new_value},
-	ignore_zero         => $current_config->{ignore_zero},
-	library             => $current_config->{library} || '',
-	editing_library     => $editing_library,
-	within_period       => $self->retrieve_data('active'),
-	has_saved_rules     => scalar(@saved_rules) > 0,
-	saved_rules         => \@saved_rules,
-	libraries           => \@libraries,
-	configured_libraries => \@configured_libraries,
-	saved_config        => $save,
-	alert_warning       => $current_config->{alert_warning},
-	alert_danger        => $current_config->{alert_danger},
-	configure_link     => $current_config->{configure_link},
+        start_date          => $current_config->{start_date},
+        end_date            => $current_config->{end_date},
+        rule_name           => $current_config->{rule_name},
+        rule_new_value      => $current_config->{rule_new_value},
+        ignore_zero         => $current_config->{ignore_zero},
+        library             => $current_config->{library} || '',
+        editing_library     => $editing_library,
+        within_period       => $self->is_within_period(),
+        has_saved_rules     => scalar(@saved_rules) > 0,
+        saved_rules         => \@saved_rules,
+        libraries           => \@libraries,
+        configured_libraries => \@configured_libraries,
+        saved_config        => $save,
+        alert_warning       => $multi_config->{default}->{alert_warning},
+        alert_danger        => $multi_config->{default}->{alert_danger},
+        configure_link      => $multi_config->{default}->{configure_link},
     );
     $self->output_html( $template->output() );
     return;
@@ -361,11 +319,8 @@ sub cronjob_nightly {
     my $active_configs = $self->retrieve_data('active_configs') || '{}';
     $active_configs = decode_json($active_configs);
 
-    # Check default configuration
-    $self->process_library_config('default', $active_configs);
-
-    # Check each library-specific configuration
-    foreach my $library_code (keys %{$multi_config->{library_configs}}) {
+    # Check each library-specific (including default) configuration
+    foreach my $library_code (keys %{$multi_config}) {
         $self->process_library_config($library_code, $active_configs);
     }
 
