@@ -261,7 +261,7 @@ sub configure {
         $multi_config->{default}->{alert_warning}  = $cgi->param('alert_warning')  || '';
         $multi_config->{default}->{alert_danger}   = $cgi->param('alert_danger')   || '';
         $multi_config->{default}->{configure_link} = $cgi->param('configure_link') || '';
-	$self->store_data({ multi_config => encode('utf8',encode_json($multi_config)) });
+	    $self->store_data({ multi_config => encode('utf8',encode_json($multi_config)) });
     }
 
     # Handle library configuration deletion
@@ -352,7 +352,7 @@ sub process_library_config {
         my $target_desc = $target_library_code ? $target_library_code : 'all libraries (default)';
         print "restoring previous rules values for library: $target_desc\n";
         $self->restore_circulation_rules();
-        $active_configs->{$library_code} = 0;
+        delete $active_configs->{$library_code};
         return;
     }
 

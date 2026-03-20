@@ -13,6 +13,7 @@ sub config {
     return $c->render(
         status => 200,
         openapi => {
+            active         => $plugin->retrieve_data('active_configs'),
             alert_warning  => $config->{alert_warning},
             alert_danger   => $config->{alert_danger},
             configure_link => $config->{configure_link},
