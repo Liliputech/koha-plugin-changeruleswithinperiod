@@ -18,10 +18,6 @@
 .config-actions {
     margin-top: 1rem;
 }
-.delete-config {
-    color: #dc3545;
-    margin-left: 1rem;
-}
 .messages input {
     width: 100%;
 }
@@ -56,7 +52,7 @@
                 <input type="hidden" name="class" value="[% CLASS %]"/>
                 <input type="hidden" name="method" value="[% METHOD %]"/>
                 <input type="hidden" name="delete_config" value="[% editing_library %]"/>
-                <button type="submit" class="btn btn-sm btn-danger delete-config">[% T.delete_configuration %]</button>
+                <button type="submit" class="btn btn-sm btn-danger">[% T.delete_configuration %]</button>
             </form>
         [% END %]
         
@@ -172,10 +168,14 @@
             <ul class="list-group">
                 [% FOREACH lib_code IN configured_libraries %]
                     <li class="list-group-item d-flex justify-content-between align-items-center">
+		        [% library_name = "default for all libraries" %]
                         [% FOREACH lib IN libraries %]
-                            [% IF lib.branchcode == lib_code %][% lib.branchname %] ([% lib.branchcode %])[% END %]
+                            [% NEXT IF lib.branchcode != lib_code %]
+			    [% library_name = lib.branchname (lib.branchcode) %]
+			    [% LAST IF lib.branchcode == lib_code %]
                         [% END %]
-                        <a href="?class=[% CLASS %]&method=[% METHOD %]&editing_library=[% lib_code %]" class="btn btn-sm btn-outline-primary">[% T.edit %]</a>
+			[% library_name %]
+                        <a href="?class=[% CLASS %]&method=[% METHOD %]&editing_library=[% lib_code %]" class="btn btn-sm btn-primary">[% T.edit %]</a>
                     </li>
                 [% END %]
             </ul>
