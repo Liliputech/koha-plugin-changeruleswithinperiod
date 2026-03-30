@@ -33,5 +33,7 @@
         alert_warning_label="Varningsmeddelande (visas när regler kan skrivas över)",
         alert_danger_label="Överskrivningsmeddelande (visas när regler för närvarande är överskrivna)",
         configure_link_label="Länktext (för plugin-konfigurationslänk)",
+        export_json="Exportera JSON",
+        import_json="Importera JSON",
     }
 %]

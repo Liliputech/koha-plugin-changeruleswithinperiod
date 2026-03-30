@@ -33,5 +33,7 @@
         alert_warning_label="Warning message (displayed when rules might be overwritten)",
         alert_danger_label="Override message (displayed when rules are currently overwritten)",
         configure_link_label="Link text (for plugin configuration link)",
+        export_json="Export JSON",
+        import_json="Import JSON",
     }
 %]

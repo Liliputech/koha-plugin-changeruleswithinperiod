@@ -106,7 +106,16 @@
     
     <div class="col-sm-6">
         <a class="btn btn-default" href="/cgi-bin/koha/admin/smart-rules.pl"><b>[% T.to_circrules %]</b></a>
-        
+        <a class="btn btn-secondary" href="?class=[% CLASS %]&method=export_config">[% T.export_json %]</a>
+        <form method="post" enctype="multipart/form-data" style="display:inline">
+            <input type="hidden" name="class" value="[% CLASS %]"/>
+            <input type="hidden" name="method" value="import_config"/>
+            [% INCLUDE 'csrf-token.inc' %]
+            <label class="btn btn-secondary mb-0" style="cursor:pointer">
+                [% T.import_json %]
+                <input type="file" name="import_file" accept=".json,application/json" style="display:none" onchange="this.form.submit()"/>
+            </label>
+        </form>
         <!-- Configuration Form -->
         <form method="get">
             <input type="hidden" name="class" value="[% CLASS %]"/>

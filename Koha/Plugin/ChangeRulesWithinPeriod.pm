@@ -13,7 +13,7 @@ use JSON qw( encode_json decode_json );
 use Encode qw(decode encode);
 
 ## Here we set our plugin version
-our $VERSION = "1.6";
+our $VERSION = "1.7";
 our $MINIMUM_VERSION = "23.11";
 
 ## Here is our metadata, some keys are required, some are optional
@@ -231,6 +231,45 @@ sub is_within_period {
     if ($today < $start_date) { return 0; }
     if ($today > $end_date) { return 0; }
     return 1;
+}
+
+sub export_config {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+    my $multi_config_raw   = $self->retrieve_data('multi_config')   // '{}';
+    my $active_configs_raw = $self->retrieve_data('active_configs') // '{}';
+    my $export = {
+        multi_config   => decode_json($multi_config_raw),
+        active_configs => decode_json($active_configs_raw),
+    };
+    my $json_output = JSON->new->utf8->pretty->encode($export);
+    print $cgi->header(
+        -type       => 'application/json; charset=utf-8',
+        -attachment => 'changerules-config.json',
+    );
+    print $json_output;
+    return;
+}
+
+sub import_config {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+    my $fh = $cgi->upload('import_file');
+    if ($fh) {
+        local $/;
+        my $json_text = <$fh>;
+        my $data = eval { decode_json($json_text) };
+        unless ($@) {
+            my %store;
+            $store{multi_config}   = encode( 'utf8', encode_json( $data->{multi_config}   ) ) if $data->{multi_config};
+            $store{active_configs} = encode_json( $data->{active_configs} )                    if $data->{active_configs};
+            $self->store_data(\%store) if %store;
+        }
+    }
+    print $cgi->redirect(
+        "?class=" . $cgi->param('class') . "&method=configure"
+    );
+    return;
 }
 
 sub configure {
