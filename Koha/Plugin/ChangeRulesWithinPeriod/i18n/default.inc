@@ -5,6 +5,7 @@
         saved_circrules="Saved CircRules",
         within_saved_alert="We are currently within a previously defined period! See saved data below",
         to_circrules="Show circulation rules",
+        default_library="default rules for all libraries",
         rule_id="Rule id",
         branchcode="Branchcode",
         categorycode="Category code",

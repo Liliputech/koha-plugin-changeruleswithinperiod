@@ -5,6 +5,7 @@
         saved_circrules="Sparade cirkulationsregler",
         within_saved_alert="Vi befinner oss för närvarande inom en tidigare definierad period! Se sparade data nedan",
         to_circrules="Visa cirkulationsregler",
+        default_library="standardregler för alla bibliotek",
         rule_id="Regel-id",
         branchcode="Filialkod",
         categorycode="Kategorikod",

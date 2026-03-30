@@ -168,13 +168,13 @@
             <ul class="list-group">
                 [% FOREACH lib_code IN configured_libraries %]
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-		        [% library_name = "default for all libraries" %]
-                        [% FOREACH lib IN libraries %]
-                            [% NEXT IF lib.branchcode != lib_code %]
-			    [% library_name = lib.branchname (lib.branchcode) %]
-			    [% LAST IF lib.branchcode == lib_code %]
-                        [% END %]
-			[% library_name %]
+		            [% library_name = T.default_library %]
+                    [% FOREACH lib IN libraries %]
+                        [% NEXT IF lib.branchcode != lib_code %]
+			            [% library_name = lib.branchname (lib.branchcode) %]
+			            [% LAST IF lib.branchcode == lib_code %]
+                    [% END %]
+                    [% library_name %]
                         <a href="?class=[% CLASS %]&method=[% METHOD %]&editing_library=[% lib_code %]" class="btn btn-sm btn-primary">[% T.edit %]</a>
                     </li>
                 [% END %]
